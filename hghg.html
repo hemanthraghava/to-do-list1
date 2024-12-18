@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>To-Do List</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1 class="title">To-Do List</h1>
+
+    <div class="input-section">
+      <input type="text" id="taskInput" placeholder="Add a new task">
+      <button id="addTaskButton">Add Task</button>
+    </div>
+
+    <ul id="taskList" class="task-list"></ul>
+  </div>
+
+  <script>
+    // Selectors
+    const taskInput = document.getElementById('taskInput');
+    const addTaskButton = document.getElementById('addTaskButton');
+    const taskList = document.getElementById('taskList');
+
+    // Load tasks from localStorage
+    const loadTasks = () => {
+      const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+      tasks.forEach(task => renderTask(task));
+    };
+
+    // Save tasks to localStorage
+    const saveTasks = () => {
+      const tasks = [];
+      document.querySelectorAll('.task').forEach(task => {
+        tasks.push({ text: task.innerText, completed: task.classList.contains('completed') });
+      });
+      localStorage.setItem('tasks', JSON.stringify(tasks));
+    };
+
+    // Render task
+    const renderTask = ({ text, completed }) => {
+      const li = document.createElement('li');
+      li.className = `task ${completed ? 'completed' : ''}`;
+      li.innerText = text;
+
+      // Toggle completion
+      li.addEventListener('click', () => {
+        li.classList.toggle('completed');
+        saveTasks();
+      });
+
+      // Delete task
+      const deleteButton = document.createElement('button');
+      deleteButton.innerText = 'Delete';
+      deleteButton.className = 'delete-button';
+      deleteButton.addEventListener('click', () => {
+        li.remove();
+        saveTasks();
+      });
+
+      li.appendChild(deleteButton);
+      taskList.appendChild(li);
+    };
+
+    // Add new task
+    addTaskButton.addEventListener('click', () => {
+      const taskText = taskInput.value.trim();
+      if (taskText === '') return;
+      renderTask({ text: taskText, completed: false });
+      taskInput.value = '';
+      saveTasks();
+    });
+
+    // Load tasks on page load
+    window.onload = loadTasks;
+  </script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-image: url('can.webp');
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 50px auto;
+      background: rgba(255, 192, 203, 0.9); /* Pink background */
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      color: #fff;
+    }
+
+    .title {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 24px;
+      color: #c84444;
+    }
+
+    .input-section {
+      display: flex;
+      gap: 10px;
+    }
+
+    #taskInput {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #444;
+      border-radius: 4px;
+      background-color:pink;
+      color:black;
+    }
+
+    #addTaskButton {
+      padding: 10px 20px;
+      background-color: #d85151;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    #addTaskButton:hover {
+      background-color: #bb1d1d;
+    }
+
+    .task-list {
+      list-style: none;
+      padding: 0;
+      margin-top: 20px;
+    }
+
+    .task {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background:pink;
+      margin-bottom: 10px;
+      padding: 10px;
+      border-radius: 4px;
+      border: 1px solid #444;
+      color: #0e0e0e;
+      cursor: pointer;
+    }
+
+    .task.completed {
+      text-decoration: line-through;
+      color: #999;
+    }
+
+    .delete-button {
+      background: #dc3545;
+      color: #fff;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .delete-button:hover {
+      background: #c82333;
+    }
+  </style>
+</body>
+</html>
